@@ -1,0 +1,59 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="responsive-image">
+<template>
+<style>
+:host {
+ display:block;
+ position:relative;
+ width:100%;
+ background-repeat:no-repeat;
+ background-size:cover;
+ background-position:center center;
+ background-color:#eee;
+ background-image:var(--reponsive-background-image);
+ padding-top:var(--responsive-height);
+ animation: fadein 1.0s;
+}
+
+@keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
+
+</style>
+</template>
+<script>
+customElements.define('responsive-image', class extends Polymer.Element
+{
+ static get is() { return 'responsive-image'; }
+ static get config()
+ {
+  return { }
+ }
+ constructor()
+ {
+  super();
+ }
+ connectedCallback()
+ {
+  super.connectedCallback();
+  const placeholder = this.getAttribute('placeholder');
+  const aspectRatio = this.getAttribute('aspect-ratio').split(':');
+  const height = (100/aspectRatio[0]) * aspectRatio[1];
+  const src = this.getAttribute('image');
+
+  this.updateStyles({
+   '--reponsive-background-image':'url(\''+placeholder+'\')',
+   '--responsive-height':height.toString()+'%'
+  });
+
+  const i = new Image();
+  i.onload = this.setImage(src);
+  i.src = src;
+ }
+
+ setImage(src)
+ {
+  this.updateStyles({'--reponsive-background-image':'url(\''+src+'\')'});
+ }
+});
+</script>
+</dom-module>
